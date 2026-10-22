@@ -24,13 +24,13 @@
       const number = heading.querySelector('span').textContent.match(/Assignment (\d+)/)?.[1];
       if (!number || Number(number) > 6) return;
       const hand = heading.querySelector('strong').textContent === '必交作業';
-      const path = `week-${number}-${hand ? 'hand' : 'practice'}.pdf`;
+      const path = `week-${number}-${hand ? 'hand' : 'practice-with-statements'}.pdf`;
       const title = `第 ${number} 週｜${hand ? '必交作業' : '自主練習'}`;
       const actions = document.createElement('div');
       actions.className = 'assignment-files';
       const preview = document.createElement('button');
       preview.type = 'button';
-      preview.textContent = '網站內閱覽';
+      preview.textContent = hand ? '網站內閱覽' : '閱覽作業＋課本題目';
       preview.setAttribute('aria-label', title + '：網站內閱覽');
       preview.addEventListener('click', () => openPdf(path, title));
       const download = document.createElement('a');
@@ -39,6 +39,15 @@
       download.textContent = '下載 PDF ↓';
       download.setAttribute('aria-label', title + '：下載 PDF');
       actions.append(preview, download);
+      if (!hand) {
+        const original = document.createElement('a');
+        original.href = `week-${number}-practice.pdf`;
+        original.target = '_blank';
+        original.rel = 'noopener';
+        original.textContent = '老師原始作業 ↗';
+        original.setAttribute('aria-label', title + '：老師原始作業');
+        actions.append(original);
+      }
       heading.after(actions);
     });
   }
