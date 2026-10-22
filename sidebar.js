@@ -55,3 +55,67 @@
   });
   updateVisibility();
 })();
+
+// Toggle the whole sidebar independently of the week-list accordion.
+(() => {
+  const aside = document.querySelector('aside');
+  const main = document.querySelector('main');
+  const mobile = window.matchMedia('(max-width: 720px)');
+  aside.id = 'course-sidebar';
+  aside.setAttribute('aria-label', '課程側邊欄');
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.id = 'toggle-sidebar';
+  trigger.setAttribute('aria-controls', aside.id);
+  trigger.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m5-11 3 3-3 3"/></svg>';
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.id = 'sidebar-backdrop';
+  backdrop.tabIndex = -1;
+  backdrop.setAttribute('aria-label', '關閉側邊欄');
+  document.body.append(backdrop, trigger);
+  let desktopOpen = true;
+  try { desktopOpen = localStorage.getItem('calculus-sidebar-open') !== 'false'; } catch {}
+  let open = false;
+  function setOpen(value, restoreFocus = false) {
+    open = value;
+    document.body.classList.toggle('sidebar-open', open);
+    document.body.classList.toggle('has-sidebar-overlay', mobile.matches && open);
+    aside.inert = !open;
+    main.inert = mobile.matches && open;
+    backdrop.hidden = !mobile.matches || !open;
+    trigger.setAttribute('aria-expanded', String(open));
+    trigger.setAttribute('aria-label', open ? '收起側邊欄' : '展開側邊欄');
+    trigger.title = open ? '收起側邊欄' : '展開側邊欄';
+    if (restoreFocus) trigger.focus();
+  }
+  trigger.addEventListener('click', () => {
+    const next = !open;
+    if (!mobile.matches) {
+      desktopOpen = next;
+      try { localStorage.setItem('calculus-sidebar-open', String(next)); } catch {}
+    }
+    setOpen(next);
+  });
+  backdrop.addEventListener('click', () => setOpen(false, true));
+  aside.addEventListener('click', event => {
+    if (mobile.matches && event.target.closest('[data-week], #overview')) setOpen(false, true);
+  });
+  document.addEventListener('keydown', event => {
+    if (!mobile.matches || !open || document.querySelector('dialog[open]')) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setOpen(false, true);
+    }
+    if (event.key === 'Tab') {
+      const visible = [...aside.querySelectorAll('a[href], button, input, select, [tabindex="0"]')]
+        .filter(el => !el.disabled && !el.closest('[inert]') && el.getClientRects().length);
+      const cycle = [trigger, ...visible];
+      const i = cycle.indexOf(document.activeElement);
+      if (event.shiftKey && i <= 0) { event.preventDefault(); cycle.at(-1).focus(); }
+      else if (!event.shiftKey && (i === -1 || i === cycle.length - 1)) { event.preventDefault(); trigger.focus(); }
+    }
+  });
+  mobile.addEventListener('change', () => setOpen(mobile.matches ? false : desktopOpen, true));
+  setOpen(mobile.matches ? false : desktopOpen);
+})();
