@@ -12,45 +12,35 @@
     viewer.querySelector('#pdf-viewer-title').textContent = title;
     viewer.querySelector('#pdf-open').href = path;
     viewer.querySelector('#pdf-download').href = path;
-    frame.title = title + ' PDF 閱覽';
-    frame.src = path;
-    viewer.showModal();
-    close.focus();
+    frame.title = title + ' PDF 閱覽';frame.src = path;viewer.showModal();close.focus();
   }
-  function addDocumentLinks() {
-    document.querySelectorAll('#cards .assignment-group').forEach(group => {
-      if (group.querySelector('.assignment-files')) return;
-      const heading = group.querySelector('.assignment-heading');
-      const number = heading.querySelector('span').textContent.match(/Assignment (\d+)/)?.[1];
-      if (!number || Number(number) > 6) return;
-      const hand = heading.querySelector('strong').textContent === '必交作業';
-      const path = `week-${number}-${hand ? 'hand' : 'practice-with-statements'}.pdf`;
-      const title = `第 ${number} 週｜${hand ? '必交作業' : '自主練習'}`;
-      const actions = document.createElement('div');
-      actions.className = 'assignment-files';
-      const preview = document.createElement('button');
-      preview.type = 'button';
-      preview.textContent = hand ? '網站內閱覽' : '閱覽作業＋課本題目';
-      preview.setAttribute('aria-label', title + '：網站內閱覽');
-      preview.addEventListener('click', () => openPdf(path, title));
-      const download = document.createElement('a');
-      download.href = path;
-      download.download = path;
-      download.textContent = '下載 PDF ↓';
-      download.setAttribute('aria-label', title + '：下載 PDF');
-      actions.append(preview, download);
-      if (!hand) {
-        const original = document.createElement('a');
-        original.href = `week-${number}-practice.pdf`;
-        original.target = '_blank';
-        original.rel = 'noopener';
-        original.textContent = '老師原始作業 ↗';
-        original.setAttribute('aria-label', title + '：老師原始作業');
-        actions.append(original);
-      }
-      heading.after(actions);
+  let documents=[];
+  function safePath(path){return typeof path==='string'&&/^(?:week-\d+-(?:hand|practice|practice-with-statements)|materials\/(?:week-\d+|midterm|final|bonus)-(?:hand|practice|original|notes))\.pdf$/.test(path)}
+  function actionsFor(doc){
+    const actions=document.createElement('div');actions.className='assignment-files';
+    const preview=document.createElement('button');preview.type='button';preview.textContent=doc.kind==='practice'?'閱覽自主練習 PDF':doc.kind==='original'?'閱覽老師原始作業':'網站內閱覽';preview.setAttribute('aria-label',doc.title+'：網站內閱覽');preview.onclick=()=>openPdf(doc.path,doc.title);
+    const download=document.createElement('a');download.href=doc.path;download.download=doc.path.split('/').pop();download.textContent='下載 PDF ↓';download.setAttribute('aria-label',doc.title+'：下載 PDF');
+    actions.append(preview,download);return actions;
+  }
+  function addDocumentLinks(){
+    document.querySelectorAll('#cards [data-slot]').forEach(card=>{
+      if(card.dataset.documentsReady)return;card.dataset.documentsReady='true';
+      documents.filter(d=>d.slot===card.dataset.slot&&safePath(d.path)).forEach(doc=>{
+        const groups=[...card.querySelectorAll('.assignment-group')].filter(g=>g.querySelector('.assignment-heading'));
+        const target=groups[doc.kind==='hand'?0:doc.kind==='practice'||doc.kind==='original'?1:-1];
+        if(target){target.querySelector('.assignment-heading').after(actionsFor(doc));}
+        else{const group=document.createElement('section');group.className='assignment-group';const title=document.createElement('strong');title.textContent=doc.title;group.append(title,actionsFor(doc));card.append(group)}
+      });
     });
   }
-  new MutationObserver(addDocumentLinks).observe(document.querySelector('#cards'), {childList:true, subtree:true});
-  addDocumentLinks();
+  async function load(){
+    try{
+      const r=await fetch('documents.json',{cache:'no-store'});if(!r.ok)throw new Error('manifest');
+      const data=await r.json();if(data.version!==1||!Array.isArray(data.documents))throw new Error('manifest');documents=data.documents;addDocumentLinks();
+    }catch{
+      const notice=document.createElement('p');notice.className='muted';notice.textContent='教材清單暫時無法載入，請重新整理或稍後再試。';document.querySelector('#cards').before(notice);
+    }
+  }
+  new MutationObserver(()=>{if(documents.length)addDocumentLinks()}).observe(document.querySelector('#cards'),{childList:true,subtree:true});
+  load();
 })();

@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "id": "week-1-hand",
+      "slot": "week-1",
+      "kind": "hand",
+      "title": "第 1 週｜必交作業",
+      "path": "week-1-hand.pdf"
+    },
+    {
+      "id": "week-1-practice",
+      "slot": "week-1",
+      "kind": "practice",
+      "title": "第 1 週｜自主練習＋課本題目",
+      "path": "week-1-practice-with-statements.pdf"
+    },
+    {
+      "id": "week-1-original",
+      "slot": "week-1",
+      "kind": "original",
+      "title": "第 1 週｜老師原始作業",
+      "path": "week-1-practice.pdf"
+    },
+    {
+      "id": "week-2-hand",
+      "slot": "week-2",
+      "kind": "hand",
+      "title": "第 2 週｜必交作業",
+      "path": "week-2-hand.pdf"
+    },
+    {
+      "id": "week-2-practice",
+      "slot": "week-2",
+      "kind": "practice",
+      "title": "第 2 週｜自主練習＋課本題目",
+      "path": "week-2-practice-with-statements.pdf"
+    },
+    {
+      "id": "week-2-original",
+      "slot": "week-2",
+      "kind": "original",
+      "title": "第 2 週｜老師原始作業",
+      "path": "week-2-practice.pdf"
+    },
+    {
+      "id": "week-3-hand",
+      "slot": "week-3",
+      "kind": "hand",
+      "title": "第 3 週｜必交作業",
+      "path": "week-3-hand.pdf"
+    },
+    {
+      "id": "week-3-practice",
+      "slot": "week-3",
+      "kind": "practice",
+      "title": "第 3 週｜自主練習＋課本題目",
+      "path": "week-3-practice-with-statements.pdf"
+    },
+    {
+      "id": "week-3-original",
+      "slot": "week-3",
+      "kind": "original",
+      "title": "第 3 週｜老師原始作業",
+      "path": "week-3-practice.pdf"
+    },
+    {
+      "id": "week-4-hand",
+      "slot": "week-4",
+      "kind": "hand",
+      "title": "第 4 週｜必交作業",
+      "path": "week-4-hand.pdf"
+    },
+    {
+      "id": "week-4-practice",
+      "slot": "week-4",
+      "kind": "practice",
+      "title": "第 4 週｜自主練習＋課本題目",
+      "path": "week-4-practice-with-statements.pdf"
+    },
+    {
+      "id": "week-4-original",
+      "slot": "week-4",
+      "kind": "original",
+      "title": "第 4 週｜老師原始作業",
+      "path": "week-4-practice.pdf"
+    },
+    {
+      "id": "week-5-hand",
+      "slot": "week-5",
+      "kind": "hand",
+      "title": "第 5 週｜必交作業",
+      "path": "week-5-hand.pdf"
+    },
+    {
+      "id": "week-5-practice",
+      "slot": "week-5",
+      "kind": "practice",
+      "title": "第 5 週｜自主練習＋課本題目",
+      "path": "week-5-practice-with-statements.pdf"
+    },
+    {
+      "id": "week-5-original",
+      "slot": "week-5",
+      "kind": "original",
+      "title": "第 5 週｜老師原始作業",
+      "path": "week-5-practice.pdf"
+    },
+    {
+      "id": "week-6-hand",
+      "slot": "week-6",
+      "kind": "hand",
+      "title": "第 6 週｜必交作業",
+      "path": "week-6-hand.pdf"
+    },
+    {
+      "id": "week-6-practice",
+      "slot": "week-6",
+      "kind": "practice",
+      "title": "第 6 週｜自主練習＋課本題目",
+      "path": "week-6-practice-with-statements.pdf"
+    },
+    {
+      "id": "week-6-original",
+      "slot": "week-6",
+      "kind": "original",
+      "title": "第 6 週｜老師原始作業",
+      "path": "week-6-practice.pdf"
+    }
+  ]
+}
