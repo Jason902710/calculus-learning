@@ -15,7 +15,7 @@
     frame.title = title + ' PDF 閱覽';frame.src = path;viewer.showModal();close.focus();
   }
   let documents=[];
-  function safePath(path){return typeof path==='string'&&/^(?:week-\d+-(?:hand|practice|practice-with-statements)|materials\/(?:week-\d+|midterm|final|bonus)-(?:hand|practice|original|notes))\.pdf$/.test(path)}
+  function safePath(path){if(typeof path==='string'&&path.startsWith(window.COURSE_AUTH_CONFIG?.url+'/storage/v1/object/public/course-pdfs/materials/')&&/\/[0-9a-f-]+\.pdf$/.test(path))return true;return typeof path==='string'&&/^(?:week-\d+-(?:hand|practice|practice-with-statements)|materials\/(?:week-\d+|midterm|final|bonus)-(?:hand|practice|original|notes))\.pdf$/.test(path)}
   function actionsFor(doc){
     const actions=document.createElement('div');actions.className='assignment-files';
     const preview=document.createElement('button');preview.type='button';preview.textContent=doc.kind==='practice'?'閱覽自主練習 PDF':doc.kind==='original'?'閱覽老師原始作業':'網站內閱覽';preview.setAttribute('aria-label',doc.title+'：網站內閱覽');preview.onclick=()=>openPdf(doc.path,doc.title);
@@ -36,7 +36,14 @@
   async function load(){
     try{
       const r=await fetch('documents.json',{cache:'no-store'});if(!r.ok)throw new Error('manifest');
-      const data=await r.json();if(data.version!==1||!Array.isArray(data.documents))throw new Error('manifest');documents=data.documents;addDocumentLinks();
+      const data=await r.json();if(data.version!==1||!Array.isArray(data.documents))throw new Error('manifest');documents=data.documents;
+      if(window.CourseAccount?.client){
+        const rows=await window.CourseAccount.materials();
+        const merged=new Map(documents.map(d=>[d.id,d]));
+        rows.forEach(d=>{if(d.hidden)merged.delete(d.id);else merged.set(d.id,{...d,path:window.CourseAccount.url(d)})});
+        documents=[...merged.values()];
+      }
+      addDocumentLinks();
     }catch{
       const notice=document.createElement('p');notice.className='muted';notice.textContent='教材清單暫時無法載入，請重新整理或稍後再試。';document.querySelector('#cards').before(notice);
     }
@@ -44,3 +51,4 @@
   new MutationObserver(()=>{if(documents.length)addDocumentLinks()}).observe(document.querySelector('#cards'),{childList:true,subtree:true});
   load();
 })();
+
